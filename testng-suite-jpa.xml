@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="spring-boot" parallel="tests" thread-count="2">
+    <test name="test-5">
+        <parameter name="dobFrom" value="1995-01-01"/>
+        <parameter name="dobTo" value="1997-01-01"/>
+        <classes>
+            <class name="com.udemy.spring.springselenium.visa.UserVisaTest"/>
+        </classes>
+    </test>
+</suite>
