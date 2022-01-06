@@ -114,7 +114,7 @@
 						</property>
 					</properties>
 					<includes>
-						<include>com.udemy.spring.springselenium.CucumberRunner</include>
+						<include>com.udemy.spring.springselenium.bdd.CucumberRunner</include>
 					</includes>
 				</configuration>
 			</plugin>
