@@ -2,16 +2,19 @@ package com.udemy.spring.springselenium.visa;
 
 import com.udemy.spring.springselenium.SpringBaseTestNGTest;
 import com.udemy.spring.springselenium.entity.User;
+import com.udemy.spring.springselenium.kelvin.annotation.LazyAutowired;
 import com.udemy.spring.springselenium.page.visa.VisaRegistrationPage;
 import com.udemy.spring.springselenium.repository.UserRepository;
+import java.sql.Date;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.sql.Date;
 
 public class UserVisaTest extends SpringBaseTestNGTest {
 
@@ -23,8 +26,11 @@ public class UserVisaTest extends SpringBaseTestNGTest {
     @Autowired
     private UserRepository repository;
 
+    @LazyAutowired
+    private ApplicationContext applicationContext;
+
     @Test(dataProvider = "getData")
-    public void visaTest(User u){
+    public void visaTest(User u) {
         this.registrationPage.goTo();
         this.registrationPage.setNames(u.getFirstName(), u.getLastName());
         this.registrationPage.setCountryFromAndTo(u.getFromCountry(), u.getToCountry());
@@ -35,19 +41,23 @@ public class UserVisaTest extends SpringBaseTestNGTest {
 
         logger.info("Request confirmation # INFO : " + this.registrationPage.getConfirmationNumber());
         logger.warn("Request confirmation # WARN : " + this.registrationPage.getConfirmationNumber());
+    }
 
+    @AfterClass
+    public void afterScenario(){
+        this.applicationContext.getBean(WebDriver.class).quit();
     }
 
     @DataProvider
-    public Object[] getData(ITestContext context){
+    public Object[][] getData(ITestContext context) {
         return this.repository.findByDobBetween(
                 Date.valueOf(context.getCurrentXmlTest().getParameter("dobFrom")),
                 Date.valueOf(context.getCurrentXmlTest().getParameter("dobTo"))
-        )
-                .stream()
-                .limit(3)
-                .toArray();
+            )
+            .stream()
+            .map(user -> new Object[] { user })
+            .limit(3)
+            .toArray(Object[][]::new);
     }
-
 
 }
